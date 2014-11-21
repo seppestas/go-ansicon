@@ -76,4 +76,3 @@ func ScrollDown(n int) {
 func RepeatCharacter(n int) {
 
 }
-

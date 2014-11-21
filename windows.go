@@ -4,10 +4,10 @@ package ansicon
 
 import (
 	"bufio"
+	"fmt"
 	"github.com/bitbored/go-ansicon/cursor"
 	"github.com/bitbored/go-ansicon/display"
 	"github.com/bitbored/go-ansicon/xterm"
-	"fmt"
 	"io"
 	"os"
 	"strconv"
@@ -20,7 +20,7 @@ const ( // States
 	DECTCEM
 )
 
-func convert(input io.Writer) (w io.Writer) {
+func convert(input io.Writer) io.Writer {
 	r, w := io.Pipe()
 
 	go func(reader io.Reader) {
@@ -56,7 +56,7 @@ func convert(input io.Writer) (w io.Writer) {
 					switch scanner.Text()[0] {
 					case ';':
 						// Read next arg
-						args  = append(args, 0)
+						args = append(args, 0)
 						i++
 					case 25:
 						state = DECTCEM

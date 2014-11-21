@@ -1,18 +1,20 @@
 // +build windows
 
-package ansi
+package ansicon
 
 import (
 	"bufio"
-	"bytes"
-	"cursor"
-	"graphic"
+	"github.com/bitbored/go-ansicon/cursor"
+	"github.com/bitbored/go-ansicon/display"
+	"github.com/bitbored/go-ansicon/xterm"
+	"fmt"
 	"io"
+	"os"
 	"strconv"
 )
 
 const ( // States
-	BEGIN
+	BEGIN = iota
 	ESCAPED
 	CSI_DONE
 	DECTCEM
@@ -25,14 +27,14 @@ func convert(input io.Writer) (w io.Writer) {
 		scanner := bufio.NewScanner(reader)
 		scanner.Split(bufio.ScanBytes)
 		state := BEGIN
-		args := make([]int, 2)
+		args := make([]int, 1)
 		i := 0
-		var buffer bytes.Buffer
 		for scanner.Scan() {
 			switch state {
 
 			case BEGIN:
 				i = 0
+				args = make([]int, 1)
 				if scanner.Text() == "\x1b" {
 					state = ESCAPED
 				} else {
@@ -47,18 +49,19 @@ func convert(input io.Writer) (w io.Writer) {
 				}
 
 			case CSI_DONE:
-				if nPart, err := strconv.Atoi(scanner.Text()); err == nil {
-					n = n*10 + nPart
+				if n, err := strconv.Atoi(scanner.Text()); err == nil {
+					args[i] = args[i]*10 + n
 					continue
 				} else {
 					switch scanner.Text()[0] {
 					case ';':
 						// Read next arg
+						args  = append(args, 0)
 						i++
 					case 25:
 						state = DECTCEM
 					default:
-						handleCommand(scanner.Text(), args)
+						handleCommand(scanner.Text()[0], args)
 						state = BEGIN
 					}
 				}
@@ -78,14 +81,14 @@ func convert(input io.Writer) (w io.Writer) {
 			fmt.Fprintln(os.Stderr, "There was an error with the scanner in attached container", err)
 		}
 	}(r)
+	return w
 }
 
 func handleCommand(command byte, args []int) {
 	n := args[0]
+	m := 0
 	if len(args) > 1 {
-		m := args[1]
-	} else {
-		m := 0
+		m = args[1]
 	}
 
 	switch command {
@@ -116,9 +119,9 @@ func handleCommand(command byte, args []int) {
 	case 'S':
 		display.ScrollUp(n)
 	case 'T':
-		display.scrollDown(n)
+		display.ScrollDown(n)
 	case 'b':
-		display.repeatCharacter(n)
+		display.RepeatCharacter(n)
 	case 'd':
 		cursor.SetRow(n)
 	case 's':
@@ -132,7 +135,7 @@ func handleCommand(command byte, args []int) {
 	case 'h':
 		xterm.SetMode(n)
 	case 'l':
-		xterm.ResetMode()
+		xterm.ResetMode(n)
 	case 'm':
 		display.SelectGraphicRendition(args)
 	case 'i':

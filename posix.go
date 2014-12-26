@@ -4,6 +4,6 @@ package ansicon
 
 import "io"
 
-func convert(input io.Writer) io.Writer {
-	return input
+func convert(w io.Writer) io.Writer {
+	return w
 }

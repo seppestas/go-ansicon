@@ -2,7 +2,7 @@
 
 package color
 
-import "github.com/bitbored/go-ansicon/windows-api"
+import "github.com/bitbored/go-ansicon/windows/api"
 
 type Color int
 
@@ -56,17 +56,17 @@ const (
 )
 
 func ResetColor() {
-	winAPI.SetConsoleTextAttribute(winAPI.HStdout, winAPI.InitScreenInfo.WAttributes)
+	winAPI.SetConsoleTextAttribute(winAPI.StdOut, winAPI.InitScreenInfo.WAttributes)
 }
 
 func ChangeColor(fg Color, fgBright bool, bg Color, bgBright bool) {
 	attr := uint16(0)
 	if fg == None || bg == None {
-		cbufinfo := winAPI.GetConsoleScreenBufferInfo(winAPI.HStdout)
+		cbufinfo := winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut)
 		if cbufinfo == nil { // No console info - Ex: stdout redirection
 			return
 		}
-		attr = winAPI.GetConsoleScreenBufferInfo(winAPI.HStdout).WAttributes
+		attr = winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut).WAttributes
 	} // if
 
 	if fg != None {
@@ -83,5 +83,5 @@ func ChangeColor(fg Color, fgBright bool, bg Color, bgBright bool) {
 		} // if
 	} // if
 
-	winAPI.SetConsoleTextAttribute(winAPI.HStdout, attr)
+	winAPI.SetConsoleTextAttribute(winAPI.StdOut, attr)
 }

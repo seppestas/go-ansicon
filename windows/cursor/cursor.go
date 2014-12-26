@@ -2,13 +2,21 @@
 
 package cursor
 
+import "github.com/bitbored/go-ansicon/windows/api"
+
 func Up(n int) {
-	// if (es_argc == 0) es_argv[es_argc++] = 1; // ESC[A == ESC[1A
-	// if (es_argc != 1) return;
-	// Pos.Y = CUR.Y - es_argv[0];
-	// if (Pos.Y < TOP) Pos.Y = TOP;
-	// Pos.X = CUR.X;
-	// SetConsoleCursorPosition( hConOut, Pos );
+	screenBufferInfo := winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut)
+
+	cur := screenBufferInfo.DwCursorPosition
+	top := screenBufferInfo.SrWindow.Top
+
+	var pos winAPI.Coord
+	pos.Y = cur.Y - int16(n)
+	if pos.Y < top {
+		pos.Y = top
+	}
+	pos.X = cur.X
+	winAPI.SetConsoleCursorPosition(winAPI.StdOut, pos)
 }
 
 func Down(n int) {
@@ -66,19 +74,39 @@ func HorizontalAbsolute(n int) {
 	// SetConsoleCursorPosition( hConOut, Pos );
 }
 
-func SetPosition(n, m int) {
-	// if (es_argc == 0)
-	// 	es_argv[es_argc++] = 1; // ESC[H == ESC[1;1H
-	// if (es_argc == 1)
-	// 	es_argv[es_argc++] = 1; // ESC[#H == ESC[#;1H
-	// if (es_argc > 2) return;
-	// Pos.X = es_argv[1] - 1;
-	// if (Pos.X < LEFT) Pos.X = LEFT;
-	// if (Pos.X > RIGHT) Pos.X = RIGHT;
-	// Pos.Y = es_argv[0] - 1;
-	// if (Pos.Y < TOP) Pos.Y = TOP;
-	// if (Pos.Y > BOTTOM) Pos.Y = BOTTOM;
-	// SetConsoleCursorPosition( hConOut, Pos );
+func SetPosition(args []int) {
+	screenBufferInfo := winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut)
+
+	width := screenBufferInfo.DwSize.X
+	top := screenBufferInfo.SrWindow.Top
+	bottom := screenBufferInfo.SrWindow.Bottom
+
+	left := int16(0)
+	right := int16(width - 1)
+	if len(args) > 2 {
+		return
+	}
+
+	pos := winAPI.Coord{1, 1}
+
+	if len(args) > 0 {
+		pos.X = int16(args[0]) // ESC[#H == ESC[#;1H
+	}
+	if len(args) > 1 {
+		pos.Y = int16(args[1])
+	}
+
+	if pos.X < left {
+		pos.X = left
+	} else if pos.X > right {
+		pos.X = right
+	}
+	if pos.Y < top {
+		pos.Y = top
+	} else if pos.Y > bottom {
+		pos.Y = bottom
+	}
+	winAPI.SetConsoleCursorPosition(winAPI.StdOut, pos)
 }
 
 func ForwardTabs(n int) {

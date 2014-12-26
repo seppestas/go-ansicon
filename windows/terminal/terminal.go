@@ -1,6 +1,6 @@
 // +build windows
 
-package xterm
+package terminal
 
 func ReportTitle(n int) {
 	// if (es_argc != 1) return;

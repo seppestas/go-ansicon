@@ -2,7 +2,7 @@
 
 package display
 
-import "github.com/bitbored/go-ansicon/color"
+import "github.com/bitbored/go-ansicon/windows/color"
 
 func createColor(code int) color.Color {
 	return color.Color(code) + color.Black

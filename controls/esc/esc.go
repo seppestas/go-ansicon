@@ -1,3 +1,5 @@
+// +build windows
+
 package esc
 
 func HandleCharacterSetCommand(command, option byte) {

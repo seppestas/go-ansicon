@@ -2,7 +2,7 @@ go-ansicon
 ==========
 
 A Go library that converts ANSI escape sequences to Windows API calls.
-Based on [ANSICON](https://github.com/adoxa/ansicon) by Jason Hood and [go-colortext](https://github.com/daviddengcn/go-colortext) by David Deng
+Based on [ANSICON](https://github.com/adoxa/ansicon) by Jason Hood, [go-colortext](https://github.com/daviddengcn/go-colortext) by David Deng and [tcsh](http://www.tcsh.org/Welcome) 
 
 This library follows the definition of the [XTerm control sequences](http://invisible-island.net/xterm/ctlseqs/ctlseqs.html).
 

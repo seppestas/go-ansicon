@@ -9,16 +9,6 @@ import (
 	"unsafe"
 )
 
-/*
-#include <stdlib.h>
-
-union Char {
-	unsigned short UnicodeChar;
-	char           AsciiChar;
-} Char;
-*/
-import "C"
-
 const (
 	STDOUT_HANDLE = uint32(-11 & 0xFFFFFFFF)
 )
@@ -72,7 +62,7 @@ type ConsoleScreenBufferInfo struct {
 }
 
 type CharInfo struct {
-	Char       C.union_Char
+	Char       interface{}
 	Attributes uint16
 }
 

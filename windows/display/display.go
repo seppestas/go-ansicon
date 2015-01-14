@@ -63,16 +63,30 @@ func Erase(n int) {
 		pos.Y = top
 		length := (bottom - top + 1) * width
 		fillBlank(int(length), pos)
+		winAPI.SetConsoleCursorPosition(winAPI.StdOut, pos)
 	}
 }
 
-func fillBlank(length int, pos winAPI.Coord) {
-	winAPI.FillConsoleOutputCharacter(winAPI.StdOut, ' ', uint32(length), pos)
-	winAPI.FillConsoleOutputAttribute(winAPI.StdOut, screenBufferInfo.WAttributes, uint32(length), pos)
-}
-
 func EraseInLine(n int) {
+	screenBufferInfo = winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut)
+	width := screenBufferInfo.DwSize.X
+	cur := screenBufferInfo.DwCursorPosition
+	lineStart := winAPI.Coord{int16(0), cur.Y}
 
+	switch n {
+	case 0: // Clear to end of line
+		length := int(width - cur.X)
+		fillBlank(length, cur)
+		// fmt.Println("clear to end")
+		return
+
+	case 1: // Clear from start of line to cursor
+		fillBlank(int(cur.X+1), lineStart)
+		return
+
+	case 2: // Clear whole line.
+		fillBlank(int(width), lineStart)
+	}
 }
 
 func ScrollUp(n int) {
@@ -84,5 +98,9 @@ func ScrollDown(n int) {
 }
 
 func RepeatCharacter(n int) {
+}
 
+func fillBlank(length int, pos winAPI.Coord) {
+	winAPI.FillConsoleOutputCharacter(winAPI.StdOut, ' ', uint32(length), pos)
+	winAPI.FillConsoleOutputAttribute(winAPI.StdOut, screenBufferInfo.WAttributes, uint32(length), pos)
 }

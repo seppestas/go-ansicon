@@ -74,6 +74,7 @@ func HorizontalAbsolute(n int) {
 	// SetConsoleCursorPosition( hConOut, Pos );
 }
 
+// Set Cursor Position [row;column] (default = [1,1]) (CUP).
 func SetPosition(args []int) {
 	screenBufferInfo := winAPI.GetConsoleScreenBufferInfo(winAPI.StdOut)
 
@@ -87,13 +88,13 @@ func SetPosition(args []int) {
 		return
 	}
 
-	pos := winAPI.Coord{1, 1}
+	pos := winAPI.Coord{0, 0}
 
 	if len(args) > 0 {
-		pos.X = int16(args[0]) // ESC[#H == ESC[#;1H
+		pos.Y = top + int16(args[0]-1) // ESC[#H == ESC[#;1H
 	}
 	if len(args) > 1 {
-		pos.Y = int16(args[1])
+		pos.X = left + int16(args[1]-1)
 	}
 
 	if pos.X < left {

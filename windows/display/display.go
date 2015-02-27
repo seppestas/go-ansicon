@@ -52,7 +52,7 @@ func Erase(n int) {
 				rect.Top = cur.Y - 1
 				pos.X, pos.Y = 0, 0
 				var charInfo winAPI.CharInfo
-				charInfo.Char[1] = ' '
+				charInfo.Char = ' '
 				charInfo.Attributes = screenBufferInfo.WAttributes
 				winAPI.ScrollConsoleScreenBuffer(winAPI.StdOut, rect, winAPI.SmallRect{}, pos, charInfo)
 			}

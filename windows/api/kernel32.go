@@ -62,7 +62,7 @@ type ConsoleScreenBufferInfo struct {
 }
 
 type CharInfo struct {
-	Char       interface{}
+	Char       uint16
 	Attributes uint16
 }
 
@@ -93,7 +93,7 @@ func SetConsoleTitle(title string) bool {
 	return (ret != 0)
 }
 
-func FillConsoleOutputCharacter(hConsoleOutput uintptr, cCharacter byte, nLength uint32, dwWriteCoord Coord) (numberOfCharsWritten int, err bool) {
+func FillConsoleOutputCharacter(hConsoleOutput uintptr, cCharacter uint16, nLength uint32, dwWriteCoord Coord) (numberOfCharsWritten int, err bool) {
 	var charsWritten uint32
 	ret, _, _ := procFillConsoleOutputCharacter.Call(
 		hConsoleOutput,
